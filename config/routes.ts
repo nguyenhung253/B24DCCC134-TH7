@@ -36,6 +36,12 @@
 		component: './RandomUser',
 		icon: 'ArrowsAltOutlined',
 	},
+	{
+		path: '/cong-viec-nhom',
+		name: 'CongViecNhom',
+		component: './CongViecNhom',
+		icon: 'TeamOutlined',
+	},
 
 	// DANH MUC HE THONG
 	// {
