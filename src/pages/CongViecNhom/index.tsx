@@ -1,15 +1,17 @@
-import { Button, Card, Modal, Space, Table, Tag, Popconfirm } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Button, Card, Modal, Space, Table, Tag, Popconfirm, Row, Col, Statistic } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, LogoutOutlined, CheckCircleOutlined, ProfileOutlined, UserOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
 import { useModel } from 'umi';
 import type { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import LoginForm from './LoginForm';
 import CongViecForm from './Form';
+import CongViecFilter from './Filter'; // Import Component Filter mới tạo
 
 const CongViecNhom = () => {
   const {
-    congViecList,
+    filteredList, // Dùng filteredList thay vì congViecList
+    thongKe,      // Lấy data thống kê
     currentUser,
     visible,
     isEdit,
@@ -33,31 +35,24 @@ const CongViecNhom = () => {
 
   const getMucDoColor = (mucDo: string) => {
     switch (mucDo) {
-      case 'Cao':
-        return 'red';
-      case 'Trung bình':
-        return 'orange';
-      case 'Thấp':
-        return 'green';
-      default:
-        return 'default';
+      case 'Cao': return 'red';
+      case 'Trung bình': return 'orange';
+      case 'Thấp': return 'green';
+      default: return 'default';
     }
   };
 
   const getTrangThaiColor = (trangThai: string) => {
     switch (trangThai) {
-      case 'Đã xong':
-        return 'success';
-      case 'Đang làm':
-        return 'processing';
-      case 'Chưa làm':
-        return 'default';
-      default:
-        return 'default';
+      case 'Đã xong': return 'success';
+      case 'Đang làm': return 'processing';
+      case 'Chưa làm': return 'default';
+      default: return 'default';
     }
   };
 
   const columns: ColumnsType<CongViecNhom.CongViec> = [
+    // ... (Giữ nguyên phần cấu hình columns như code cũ của bạn)
     {
       title: 'Tên công việc',
       dataIndex: 'tenCongViec',
@@ -75,9 +70,7 @@ const CongViecNhom = () => {
       dataIndex: 'mucDoUuTien',
       key: 'mucDoUuTien',
       width: 150,
-      render: (mucDo: string) => (
-        <Tag color={getMucDoColor(mucDo)}>{mucDo}</Tag>
-      ),
+      render: (mucDo: string) => <Tag color={getMucDoColor(mucDo)}>{mucDo}</Tag>,
     },
     {
       title: 'Thời hạn',
@@ -91,9 +84,7 @@ const CongViecNhom = () => {
       dataIndex: 'trangThai',
       key: 'trangThai',
       width: 120,
-      render: (trangThai: string) => (
-        <Tag color={getTrangThaiColor(trangThai)}>{trangThai}</Tag>
-      ),
+      render: (trangThai: string) => <Tag color={getTrangThaiColor(trangThai)}>{trangThai}</Tag>,
     },
     {
       title: 'Thao tác',
@@ -129,17 +120,36 @@ const CongViecNhom = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
+      {/* Header thống kê */}
+      <Row gutter={16} style={{ marginBottom: 16 }}>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Tổng số công việc" value={thongKe.tongSo} prefix={<ProfileOutlined />} />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Đã hoàn thành" value={thongKe.daHoanThanh} valueStyle={{ color: '#3f8600' }} prefix={<CheckCircleOutlined />} />
+          </Card>
+        </Col>
+        <Col span={8}>
+          <Card size="small">
+            <Statistic title="Công việc được giao cho tôi" value={thongKe.cuaToi} valueStyle={{ color: '#1890ff' }} prefix={<UserOutlined />} />
+          </Card>
+        </Col>
+      </Row>
+
+      {/* Gọi Component Lọc đã tách file */}
+      <CongViecFilter />
+
       <Card
         title={
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Quản lý Công việc Nhóm</span>
+            <span>Danh sách công việc</span>
             <Space>
-              <span>Xin chào, {currentUser.username}</span>
-              <Button
-                icon={<LogoutOutlined />}
-                onClick={handleLogout}
-              >
+              <Tag color="blue" style={{ padding: '4px 10px', fontSize: 14 }}>Xin chào, {currentUser.username}</Tag>
+              <Button icon={<LogoutOutlined />} onClick={handleLogout} danger>
                 Đăng xuất
               </Button>
             </Space>
@@ -160,7 +170,7 @@ const CongViecNhom = () => {
         }
       >
         <Table
-          dataSource={congViecList}
+          dataSource={filteredList} // Quan trọng: Đã đổi thành filteredList
           columns={columns}
           rowKey="id"
           pagination={{ pageSize: 10 }}
@@ -169,7 +179,7 @@ const CongViecNhom = () => {
 
       <Modal
         title={isEdit ? 'Chỉnh sửa công việc' : 'Thêm công việc mới'}
-        open={visible}
+        visible={visible}
         onCancel={() => setVisible(false)}
         footer={null}
         destroyOnClose
