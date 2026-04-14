@@ -6,12 +6,13 @@ import type { ColumnsType } from 'antd/es/table';
 import moment from 'moment';
 import LoginForm from './LoginForm';
 import CongViecForm from './Form';
-import CongViecFilter from './Filter'; // Import Component Filter mới tạo
+import CongViecFilter from './Filter';
+import CongViecCalendar from './Calendar';
 
 const CongViecNhom = () => {
   const {
-    filteredList, // Dùng filteredList thay vì congViecList
-    thongKe,      // Lấy data thống kê
+    filteredList, 
+    thongKe,     
     currentUser,
     visible,
     isEdit,
@@ -186,6 +187,9 @@ const CongViecNhom = () => {
       >
         <CongViecForm />
       </Modal>
+
+      {/* Hiển thị Calendar */}
+      <CongViecCalendar />
     </div>
   );
 };

@@ -59,3 +59,19 @@ declare const APP_CONFIG_TITLE_CORE: string;
 declare const APP_CONFIG_TITLE_CSVC: string;
 declare const APP_CONFIG_TITLE_THU_VIEN: string;
 declare const APP_CONFIG_TITLE_QLVB: string;
+
+// Typings cho module Công việc Nhóm
+declare namespace CongViecNhom {
+  interface User {
+    username: string;
+  }
+
+  interface CongViec {
+    id: string;
+    tenCongViec: string;
+    nguoiDuocGiao: string;
+    mucDoUuTien: 'Thấp' | 'Trung bình' | 'Cao';
+    deadline: string;
+    trangThai: 'Chưa làm' | 'Đang làm' | 'Đã xong';
+  }
+}
